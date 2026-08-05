@@ -38,9 +38,24 @@ Do not persist article bodies, cookies, edit tokens, private URLs, inferred clai
     "profile": "$HOME/.lovstudio/skills/brand.json"
   },
   "wechat_article_branding": {
+    "brand_profile": "$HOME/.lovstudio/skills/wechat-article-branding-brand.json",
     "default_pipeline": "full",
     "polish_enabled": false,
-    "cover_ratios": ["2.35:1", "1:1"]
+    "cover_ratios": ["2.35:1", "1:1"],
+    "opening_hero": {
+      "enabled": false,
+      "ratio": "4:3",
+      "placement": "before_intro"
+    },
+    "cover_prompt": {
+      "enabled": false,
+      "placement": "before_endcap",
+      "title": "封面 Prompt"
+    }
   }
 }
 ```
+
+`opening_hero` 与 `cover_prompt` 均默认关闭。只有当前请求或持久配置显式启用时写入正文；生成本地封面 Prompt 本身不视为公开授权。
+
+`wechat_article_branding.brand_profile` 优先于共享的通用 `brand.profile`。公众号品牌化必须从该文件解析 `publication`，避免把工作室或产品品牌误用为发布账号 Logo。

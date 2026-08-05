@@ -1,8 +1,8 @@
 # lovstudio-wechat-article-branding
 
-![Version](https://img.shields.io/badge/version-0.1.0-CC785C)
+![Version](https://img.shields.io/badge/version-0.4.0-CC785C)
 
-自动读取微信公众号文章，完成内容智能、封面指导和品牌预设应用，交付专业、有审美的品牌内容。
+自动读取微信公众号文章，完成标题与内容智能、分享封面、正文首屏品牌图、可选封面 Prompt 和稳定品牌预设应用，交付专业、有审美的品牌内容。
 
 ## 本地安装
 
@@ -17,7 +17,7 @@ ln -s "$SKILL_SOURCE_DIR" \
 
 ## 用户配置
 
-品牌名称、Logo、产品、链接、语气和设计指南通过共享 Profile 提供。真实配置不进入 Skill 源码。
+发布主体、工作室品牌、产品、链接、语气和设计指南通过共享 Profile 提供。封面与正文首图只使用发布主体的官方 Logo；每个产品在品牌尾注中默认只展示一个主链接。真实配置不进入 Skill 源码。
 
 默认共享配置：
 
@@ -37,12 +37,16 @@ $lovstudio-wechat-article-branding 把当前公众号文章整体品牌化：生
 $lovstudio-wechat-article-branding audit 当前文章，只检查内容、审美和品牌一致性，不修改。
 ```
 
+```text
+$lovstudio-wechat-article-branding 给当前文章增加正文首屏品牌图，并把这次实际使用的封面 Prompt 作为可复制区块放在品牌尾注之前。
+```
+
 ## 管线
 
 - `full`：内容、封面、品牌和验收
-- `content`：结构、TOC、摘要或明确要求的润色
+- `content`：标题、结构、TOC、摘要或明确要求的正文润色
 - `cover`：封面策略、制作、上传和裁切验收
-- `brand`：品牌内容与可复制资产块
+- `brand`：稳定、独立的品牌内容与可复制资产块
 - `audit`：只读质量检查
 
 ## 质量门
@@ -58,6 +62,8 @@ python3 scripts/validate_brand_profile.py --self-test
 - 封面任务按需使用图像或素材能力
 - Python 3.8+
 - PyYAML（源码结构校验）
+
+正文首屏品牌图与封面 Prompt 是独立选项，默认关闭。详见 `references/cover-prompt.md`。
 
 ## License
 

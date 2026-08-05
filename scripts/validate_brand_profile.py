@@ -35,6 +35,17 @@ def nonempty(value: Any) -> bool:
 
 def validate(profile: dict[str, Any]) -> list[str]:
     errors: list[str] = []
+    publication = profile.get("publication")
+    if not isinstance(publication, dict):
+        errors.append("publication must be an object")
+        publication = {}
+    if not nonempty(publication.get("name")):
+        errors.append("publication.name is required")
+    if not nonempty(publication.get("logo")):
+        errors.append("publication.logo is required")
+    if publication.get("logo_policy") != "publisher_only":
+        errors.append("publication.logo_policy must be publisher_only")
+
     brand = profile.get("brand")
     if not isinstance(brand, dict):
         errors.append("brand must be an object")
@@ -60,8 +71,11 @@ def validate(profile: dict[str, Any]) -> list[str]:
     ratios = visual.get("cover_ratios", [])
     if not isinstance(ratios, list) or not all(nonempty(item) for item in ratios):
         errors.append("visual.cover_ratios must be a list of ratio strings")
+    if "logo" in visual:
+        errors.append("visual.logo is ambiguous; use publication.logo")
 
     products = profile.get("products", [])
+    product_urls: set[str] = set()
     if not isinstance(products, list):
         errors.append("products must be a list")
     else:
@@ -75,11 +89,56 @@ def validate(profile: dict[str, Any]) -> list[str]:
                 errors.append(f"products[{index}].promise is required")
             if not valid_url(product.get("url")):
                 errors.append(f"products[{index}].url must be an HTTP(S) URL")
+            else:
+                product_urls.add(product["url"])
+
+    blocks = profile.get("blocks", {})
+    if not isinstance(blocks, dict):
+        errors.append("blocks must be an object")
+    else:
+        endcap = blocks.get("endcap")
+        if endcap is not None and not isinstance(endcap, (bool, dict)):
+            errors.append("blocks.endcap must be a boolean or object")
+        if isinstance(endcap, dict):
+            enabled = endcap.get("enabled", True)
+            if not isinstance(enabled, bool):
+                errors.append("blocks.endcap.enabled must be a boolean")
+            if endcap.get("mode", "stable") != "stable":
+                errors.append("blocks.endcap.mode must be stable")
+            if endcap.get("product_link_policy", "primary_only") != "primary_only":
+                errors.append("blocks.endcap.product_link_policy must be primary_only")
+            if enabled and not nonempty(endcap.get("title")):
+                errors.append("blocks.endcap.title is required when enabled")
+            paragraphs = endcap.get("paragraphs", [])
+            if not isinstance(paragraphs, list) or not all(nonempty(item) for item in paragraphs):
+                errors.append("blocks.endcap.paragraphs must be a list of non-empty strings")
+            links = endcap.get("links", [])
+            if not isinstance(links, list):
+                errors.append("blocks.endcap.links must be a list")
+            else:
+                for index, link in enumerate(links):
+                    if not isinstance(link, dict):
+                        errors.append(f"blocks.endcap.links[{index}] must be an object")
+                        continue
+                    if not nonempty(link.get("label")):
+                        errors.append(f"blocks.endcap.links[{index}].label is required")
+                    if not valid_url(link.get("url")):
+                        errors.append(f"blocks.endcap.links[{index}].url must be an HTTP(S) URL")
+                    elif link["url"] in product_urls:
+                        errors.append(
+                            f"blocks.endcap.links[{index}].url duplicates a products[].url; "
+                            "product links are resolved from products[].url"
+                        )
     return errors
 
 
 def self_test() -> int:
     profile = {
+        "publication": {
+            "name": "Example Publisher",
+            "logo": "./assets/example-publisher-logo.svg",
+            "logo_policy": "publisher_only",
+        },
         "brand": {
             "name": "Example Studio",
             "site": "https://example.com",
@@ -90,6 +149,16 @@ def self_test() -> int:
         "products": [
             {"name": "Example Product", "promise": "A clear user result", "url": "https://example.com/product"}
         ],
+        "blocks": {
+            "endcap": {
+                "enabled": True,
+                "mode": "stable",
+                "product_link_policy": "primary_only",
+                "title": "Create useful things",
+                "paragraphs": ["Approved reusable endcap copy"],
+                "links": [{"label": "Example Studio", "url": "https://example.com"}],
+            }
+        },
     }
     errors = validate(profile)
     if errors:
@@ -101,6 +170,28 @@ def self_test() -> int:
     invalid["brand"] = {"name": "", "site": "not-a-url"}
     if not validate(invalid):
         print("SELF-TEST FAILED: invalid brand profile was accepted")
+        return 1
+    invalid_endcap = json.loads(json.dumps(profile))
+    invalid_endcap["blocks"]["endcap"]["mode"] = "article-adaptive"
+    if not validate(invalid_endcap):
+        print("SELF-TEST FAILED: article-adaptive endcap was accepted")
+        return 1
+    missing_publication = json.loads(json.dumps(profile))
+    del missing_publication["publication"]
+    if not validate(missing_publication):
+        print("SELF-TEST FAILED: profile without publisher identity was accepted")
+        return 1
+    ambiguous_logo = json.loads(json.dumps(profile))
+    ambiguous_logo["visual"]["logo"] = "./assets/studio-logo.svg"
+    if not validate(ambiguous_logo):
+        print("SELF-TEST FAILED: ambiguous visual.logo was accepted")
+        return 1
+    duplicate_product_link = json.loads(json.dumps(profile))
+    duplicate_product_link["blocks"]["endcap"]["links"].append(
+        {"label": "Example Product", "url": "https://example.com/product"}
+    )
+    if not validate(duplicate_product_link):
+        print("SELF-TEST FAILED: duplicated product endcap link was accepted")
         return 1
     with tempfile.TemporaryDirectory() as directory:
         path = Path(directory) / "brand.json"
