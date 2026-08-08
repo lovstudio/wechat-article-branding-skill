@@ -1,5 +1,5 @@
 ---
-name: lovstudio-wechat-branding-quality-gate
+name: sgc-wechat-branding-quality-gate
 description: >
   验收公众号文章的内容、结构、审美、品牌准确性与保存持久化；用于“检查最终效果”“保存后验证”、"review the branded WeChat article"，并修复发现的问题。
 license: MIT

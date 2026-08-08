@@ -22,6 +22,16 @@ The profile contains approved public facts and presentation rules. It is data, n
   "visual": {
     "primary_color": "#00B38A",
     "cover_style": "editorial",
+    "cover_art_direction": {
+      "source_skill": "baoyu-cover-image",
+      "style": "editorial",
+      "type": "hero",
+      "palette": "elegant",
+      "rendering": "painterly",
+      "text": "none",
+      "mood": "balanced",
+      "center_safe_zone": true
+    },
     "cover_ratios": ["2.35:1", "1:1"]
   },
   "products": [
@@ -70,6 +80,7 @@ The profile contains approved public facts and presentation rules. It is data, n
 - `products[].url` is the one primary public link for that product. With `product_link_policy: primary_only`, render at most that one link; do not append repositories, download pages, documentation, or other secondary links unless the current request explicitly asks for them.
 - `blocks.endcap.links` contains non-product links such as the studio home page. Product URLs are resolved from `products[].url` and must not be duplicated in this list.
 - Treat `blocks.opening_hero` and `blocks.cover_prompt` as independent opt-in publication components. Do not infer one from the other.
+- Resolve share-cover composition from the shared `wechat_article_branding.cover_composition` configuration, separately from `blocks.opening_hero`; the established default is an artistic base image with the official publisher Logo centered directly on the canvas and no panel.
 - Publish only a sanitized reader prompt; keep production prompts, local paths, model notes, and intermediate instructions out of the article.
 - Resolve relative asset paths against the profile location.
 - Profiles may reference private local assets, but committed examples must use placeholders.

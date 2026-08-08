@@ -1,5 +1,5 @@
 ---
-name: lovstudio-wechat-branding-article-access
+name: sgc-wechat-branding-article-access
 description: >
   获取微信公众号文章的真实正文、结构、元数据和封面，并提供安全写回入口；用于 Branding 管线中的“读取当前文章”或 "acquire this WeChat article" 阶段。
 license: MIT
@@ -10,7 +10,7 @@ metadata:
     - wechat
     - article-access
     - browser-automation
-  compatibility: "Embedded module for lovstudio-wechat-article-branding; authenticated browser automation required."
+  compatibility: "Embedded module for sgc-wechat-article-branding-skill; authenticated browser automation required."
   dependencies: []
 ---
 
@@ -33,7 +33,7 @@ metadata:
 
 ## Workflow (MANDATORY)
 
-1. 优先调用已安装的 `lovstudio-wechat-article-operator`。
+1. 优先调用已安装的 `sgc-wechat-article-operator`。
 2. Operator 不可用时，选择能复用登录状态并隔离任务空间的浏览器适配器。
 3. 读取标题、摘要、正文 HTML 与文本、章节、图片、封面、字数和保存状态。
 4. 形成内部文章状态，记录必须保持不变的字段。
@@ -57,4 +57,4 @@ metadata:
 
 ## Dependencies
 
-`lovstudio-wechat-article-operator` 优先；缺少时使用当前运行时可用的已登录浏览器自动化能力。
+`sgc-wechat-article-operator` 优先；缺少时使用当前运行时可用的已登录浏览器自动化能力。

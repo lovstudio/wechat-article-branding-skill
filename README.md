@@ -1,8 +1,8 @@
-# lovstudio-wechat-article-branding
+# sgc-wechat-article-branding-skill
 
-![Version](https://img.shields.io/badge/version-0.4.0-CC785C)
+![Version](https://img.shields.io/badge/version-0.7.0-CC785C)
 
-自动读取微信公众号文章，完成标题与内容智能、分享封面、正文首屏品牌图、可选封面 Prompt 和稳定品牌预设应用，交付专业、有审美的品牌内容。
+自动读取微信公众号文章，完成标题与内容智能、艺术底图与居中 Logo 分享封面、正文首屏品牌图、可选封面 Prompt 和稳定品牌预设应用，交付专业、有审美的品牌内容。
 
 ## 本地安装
 
@@ -12,7 +12,7 @@
 export SKILL_SOURCE_DIR="$(pwd)"
 mkdir -p "${LOVSTUDIO_SKILLS_INSTALL_DIR:?请设置本地 Skills 目录}"
 ln -s "$SKILL_SOURCE_DIR" \
-  "$LOVSTUDIO_SKILLS_INSTALL_DIR/lovstudio-wechat-article-branding"
+  "$LOVSTUDIO_SKILLS_INSTALL_DIR/sgc-wechat-article-branding-skill"
 ```
 
 ## 用户配置
@@ -30,15 +30,15 @@ ${LOVSTUDIO_SKILLS_PROFILE:-$HOME/.lovstudio/skills/profile.json}
 ## 使用
 
 ```text
-$lovstudio-wechat-article-branding 把当前公众号文章整体品牌化：生成目录、重构封面、增加专业的品牌收尾并保存验证。
+$sgc-wechat-article-branding-skill 把当前公众号文章整体品牌化：生成目录、重构封面、增加专业的品牌收尾并保存验证。
 ```
 
 ```text
-$lovstudio-wechat-article-branding audit 当前文章，只检查内容、审美和品牌一致性，不修改。
+$sgc-wechat-article-branding-skill audit 当前文章，只检查内容、审美和品牌一致性，不修改。
 ```
 
 ```text
-$lovstudio-wechat-article-branding 给当前文章增加正文首屏品牌图，并把这次实际使用的封面 Prompt 作为可复制区块放在品牌尾注之前。
+$sgc-wechat-article-branding-skill 给当前文章增加正文首屏品牌图，并把这次实际使用的封面 Prompt 作为可复制区块放在品牌尾注之前。
 ```
 
 ## 管线
@@ -63,7 +63,7 @@ python3 scripts/validate_brand_profile.py --self-test
 - Python 3.8+
 - PyYAML（源码结构校验）
 
-正文首屏品牌图与封面 Prompt 是独立选项，默认关闭。详见 `references/cover-prompt.md`。
+正文首屏品牌图与封面 Prompt 是独立选项，默认关闭。封面艺术方向从旧封面创作 skill 与共享 Profile 持久读取；生产 Prompt 模板内置在 `prompts/cover-hero-editorial-painterly.md`，公开选项与落地规则见 `references/cover-prompt.md`。
 
 ## License
 

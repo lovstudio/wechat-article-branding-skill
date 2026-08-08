@@ -15,7 +15,9 @@ Validate the final article at four layers.
 - Headings, body, code or prompt blocks, and brand endcap have distinct but coherent hierarchy.
 - 启用正文首屏时，首图是导语之前的独立出版组件，不继承导语卡片、正文边框或背景样式。
 - The cover has one primary focal point and does not rely on generic AI-tech decoration.
+- The cover visibly follows the resolved art direction (`type`, `style`, `palette`, `rendering`, and `mood`); an artistic-base request is not satisfied by an arbitrary warm still life.
 - Wide and square sharing crops preserve the meaningful subject and brand mark.
+- 分享封面以艺术主图为底，官方发布 Logo 直接位于画面中心；不得用左下角品牌面板、卡片或贴纸替代该构图规则。
 - 封面与正文首图使用 `publication.name` 对应的官方 `publication.logo`；不得出现工作室、母品牌或产品 Logo 的误替换。
 - 品牌区作为独立出版组件出现，通过位置与层级保持自然，不充当正文结论的续写。
 - 启用封面 Prompt 时，区块位于正文结论之后、品牌尾注之前，内容可复制且与实际成图方法一致。

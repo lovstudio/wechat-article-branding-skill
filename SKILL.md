@@ -1,11 +1,11 @@
 ---
-name: lovstudio-wechat-article-branding
+name: sgc-wechat-article-branding-skill
 description: >
   自动读取微信公众号文章并完成目录、封面、正文首屏、可公开封面 Prompt、结构优化和品牌内容应用；适用于“把当前公众号文章品牌化”“加上封面 Prompt”、"turn this WeChat article into branded content"。
 license: MIT
 metadata:
   author: lovstudio
-  version: "0.4.0"
+  version: "0.7.0"
   tags:
     - wechat
     - article-branding
@@ -29,7 +29,7 @@ metadata:
 
 ### Do not activate when
 
-- 用户只要求读取、插入、替换或保存某个明确字段，使用 `lovstudio-wechat-article-operator`。
+- 用户只要求读取、插入、替换或保存某个明确字段，使用 `sgc-wechat-article-operator`。
 - 用户只需要一张独立封面或一次离线文案改写，不涉及完整公众号文章。
 - 用户明确只要诊断报告而不允许修改时，选择 `audit` 管线，不执行写回。
 
@@ -45,6 +45,8 @@ metadata:
 - **Artifacts are selectable.** 分享封面、正文首屏品牌图和面向读者的封面 Prompt 是三个独立选项；不因生成了本地 Prompt 就默认公开到文章。
 - **Publisher voice matters.** 转载、采访与自述的标题必须匹配当前发布账号的叙事身份，不照搬来源媒体对发布者的第三人称命名。
 - **Persisted acceptance.** 保存后重载、真实裁切和最终可见顺序是验收依据。
+- **Cover direction is persisted.** 生成式封面必须读取旧封面创作 skill 的类型、调色、媒介和文字层级偏好；不能把“艺术底图”退化成未经选择的图库静物。
+- **Cover Prompt is skill-owned.** 封面生产 Prompt 模板属于 branding skill 的 `prompts/` 资产；输出目录只保存按文章命题填充后的执行实例，不让一次任务的临时 Prompt 成为唯一规则来源。
 
 ## User Configuration
 
@@ -57,6 +59,8 @@ metadata:
 - `$SKILL_DIR/skills/article-access/SKILL.md` — 获取文章、调用公开 Operator 或使用自包含适配流程。
 - `$SKILL_DIR/skills/content-intelligence/SKILL.md` — 文章结构、TOC、摘要与可选润色计划。
 - `$SKILL_DIR/skills/cover-direction/SKILL.md` — 封面策略、素材来源、品牌完整性与双比例裁切。
+- `$SKILL_DIR/skills/cover-composition/SKILL.md` — 复用旧公众号封面裁切器的艺术底图、居中 Logo 与双比例合成规则。
+- `$SKILL_DIR/prompts/cover-hero-editorial-painterly.md` — branding skill 自有的艺术底图生产 Prompt 模板。
 - `$SKILL_DIR/skills/brand-application/SKILL.md` — 品牌文案、产品信息、可复制资产块与视觉预设。
 - `$SKILL_DIR/skills/quality-gate/SKILL.md` — 内容、审美、品牌和保存持久化验收。
 
@@ -131,12 +135,17 @@ python3 "$SKILL_DIR/scripts/validate_brand_profile.py" BRAND_PROFILE.json
 
 使用封面模块把文章命题变成一个视觉世界：
 
+- 先读取 `$KIT_DIR/prompts/cover-hero-editorial-painterly.md`，将文章命题和视觉隐喻填入模板；若用户配置了其他方向，保留模板的分层结构并替换已解析的艺术参数。
 - 先分析参考图的信息层级和审美语法，不逐元素照抄；
 - 根据题材选择真实素材或生成式画面；
 - 只使用 `publication.logo` 指向的发布主体官方 Logo，保留字形、间距和拼写；不得从 `brand.name`、工作室资产目录或产品名称猜测 Logo；
 - 同时验证 `2.35:1` 消息列表与中心 `1:1` 分享裁切；
 - 保存完整 Prompt、素材来源、PNG 与上传用 JPG；
+- 分享封面必须读取 `wechat_article_branding.cover_composition`：以艺术主图铺底，底部做轻微调暗，使用 `publication.logo` 直接居中叠加，不使用左下角品牌面板、卡片或贴纸；先完成宽版合成，再从中心派生方形裁切；
+- 生成底图前读取 `cover_composition.art_direction`：`source_skill`、`style`、`type`、`palette`、`rendering`、`text` 与 `mood` 共同决定艺术方向；`text: none` 时把 Logo 作为独立后置品牌层，不让生成模型绘制品牌标识；
+- 当方向为 `hero` / `editorial` 时，优先建立单一视觉隐喻、明确材质和中心安全留白；除非用户明确要求，排除暖色桌面静物、文具摆拍、泛化科技粒子和图库式产品摄影；
 - 同时生成制作 Prompt 与经过清理的读者可复制 Prompt；只有显式启用 `cover_prompt` 时才把后者写入正文；
+- 将本次替换字段后的完整制作 Prompt 保存为输出实例，并在交付报告中指出它继承自 branding skill 内的 Prompt 模板；
 - 启用 `opening_hero` 时，另做适合正文阅读的首屏比例并放在导语之前；不得直接把分享封面当作未经设计的普通插图；
 - 真实上传后检查平台 CDN 成品。
 
@@ -155,7 +164,7 @@ python3 "$SKILL_DIR/scripts/validate_brand_profile.py" BRAND_PROFILE.json
 
 ### Step 7: Write back through the article operator
 
-优先调用公开的 `lovstudio-wechat-article-operator`。若不可用，使用文章访问模块中的自包含操作契约：
+优先调用公开的 `sgc-wechat-article-operator`。若不可用，使用文章访问模块中的自包含操作契约：
 
 1. 保存变更前快照；
 2. 按计划执行最小写入；
@@ -192,6 +201,7 @@ python3 "$SKILL_DIR/scripts/validate_brand_profile.py" BRAND_PROFILE.json
 - [品牌 Profile](references/brand-profile.md)
 - [验收标准](references/acceptance.md)
 - [封面 Prompt 选项](references/cover-prompt.md)
+- [封面生产 Prompt 模板](prompts/cover-hero-editorial-painterly.md)
 
 ## Dependencies
 

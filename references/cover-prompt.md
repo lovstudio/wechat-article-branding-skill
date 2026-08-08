@@ -2,6 +2,13 @@
 
 Treat the cover production prompt and the article-visible prompt as separate artifacts.
 
+## Skill-owned production template
+
+封面生产 Prompt 的源文件属于 branding skill 本身，见
+[Hero editorial painterly Prompt](../prompts/cover-hero-editorial-painterly.md)。执行封面管线时，
+先读取该模板，再结合文章命题、用户配置和最终素材策略生成本次完整 Prompt；输出目录中的
+`cover-production-prompt.md` 只是本次执行的实例，不是唯一来源。
+
 ## Options
 
 ```json
@@ -25,7 +32,7 @@ Keep both options disabled unless the current request or resolved user configura
 
 ## Production and reader prompts
 
-Preserve the production prompt as an internal artifact with the full composition, crop, source, editing, and output requirements. Derive the reader prompt from the final method actually used.
+Preserve the production prompt as an internal artifact with the full composition, crop, source, editing, and output requirements. Derive the reader prompt from the final method actually used. The production prompt must inherit the skill-owned template's resolved direction (`hero`, `editorial`, `painterly`, `text: none`, and a center-safe zone) unless the user explicitly selects another direction.
 
 Remove from the reader prompt:
 
@@ -45,11 +52,11 @@ Retain in the reader prompt:
 
 ## Article block
 
-Render only a heading and one directly copyable prompt block. Use `data-lovstudio-block="cover-prompt"` as the unique marker. Place the block after the article conclusion and before the stable brand endcap by default. Do not add a process diary, model commentary, or reuse instructions around it.
+Render only a heading and one directly copyable prompt block. Use `data-sgc-block="cover-prompt"` as the unique marker. Place the block after the article conclusion and before the stable brand endcap by default. Do not add a process diary, model commentary, or reuse instructions around it.
 
 ## Opening hero
 
-When enabled, create a reading-oriented image rather than reusing the sharing cover without review. Default to `4:3`, place the official publisher Logo from `publication.logo` near the lower center, preserve a single visual focal point, and insert the block before the introduction with `data-lovstudio-block="opening-hero"`. Keep it outside introduction cards, blockquotes, borders, and colored content containers.
+When enabled, create a reading-oriented image rather than reusing the sharing cover without review. Default to `4:3`, place the official publisher Logo from `publication.logo` near the lower center, preserve a single visual focal point, and insert the block before the introduction with `data-sgc-block="opening-hero"`. Keep it outside introduction cards, blockquotes, borders, and colored content containers.
 
 ## Validation
 

@@ -1,5 +1,5 @@
 ---
-name: lovstudio-wechat-branding-content-intelligence
+name: sgc-wechat-branding-content-intelligence
 description: >
   基于真实公众号文章生成标题、TOC、结构调整、摘要和可选润色计划；用于“润色标题”“生成目录”“优化文章结构”、"improve this article structure"，不直接操作编辑器。
 license: MIT
@@ -10,7 +10,7 @@ metadata:
     - content-intelligence
     - toc
     - editorial-structure
-  compatibility: "Embedded module for lovstudio-wechat-article-branding."
+  compatibility: "Embedded module for sgc-wechat-article-branding-skill."
   dependencies: []
 ---
 

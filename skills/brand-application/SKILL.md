@@ -1,5 +1,5 @@
 ---
-name: lovstudio-wechat-branding-brand-application
+name: sgc-wechat-branding-brand-application
 description: >
   从可移植品牌 Profile 生成专业且不突兀的作者、工作室、产品和资源内容块；用于“增加品牌收尾”“加入产品介绍”、"apply this brand to the article"。
 license: MIT
@@ -10,7 +10,7 @@ metadata:
     - brand-content
     - article-endcap
     - product-copy
-  compatibility: "Embedded module for lovstudio-wechat-article-branding."
+  compatibility: "Embedded module for sgc-wechat-article-branding-skill."
   dependencies: []
 ---
 
@@ -39,7 +39,7 @@ metadata:
 3. Profile 已提供批准文案时直接复用；不要为了“呼应文章”临时创造口号、比喻或新的品牌定位。
 4. 没有批准文案时，用稳定品牌主张和“为读者带来什么结果”描述产品，不罗列内部能力和技术数量。
 5. 构建必要内容块：品牌尾注、产品介绍、作者信息、链接、可复制 Prompt 或代码。每个产品只输出 `products[].url` 这一主链接；不从正文、代码仓库或其他资料追加辅助链接。
-6. 启用 `cover_prompt` 时，完整读取 `$KIT_DIR/references/cover-prompt.md`，使用封面模块产出的读者可复制版本；默认锚点为正文结论之后、品牌尾注之前，唯一标记为 `data-lovstudio-block="cover-prompt"`。
+6. 启用 `cover_prompt` 时，完整读取 `$KIT_DIR/references/cover-prompt.md`，使用封面模块产出的读者可复制版本；默认锚点为正文结论之后、品牌尾注之前，唯一标记为 `data-sgc-block="cover-prompt"`。
 7. 可复制资产只保留章节标题和内容块；删除本地路径、内部背景、工具步骤、制作过程和复用说明。
 8. 根据 Profile 应用 Logo、品牌色和层级；封面与正文首图只认 `publication.logo`，品牌尾注使用 `brand` 和 `products`；文章主题只影响摆放与视觉权重，不改写品牌内容主体。
 9. 检查名称、链接、拼写、承诺和 `forbidden_context`。

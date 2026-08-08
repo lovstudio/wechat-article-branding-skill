@@ -42,6 +42,29 @@ Do not persist article bodies, cookies, edit tokens, private URLs, inferred clai
     "default_pipeline": "full",
     "polish_enabled": false,
     "cover_ratios": ["2.35:1", "1:1"],
+    "cover_composition": {
+      "base": "artistic",
+      "art_direction": {
+        "source_skill": "baoyu-cover-image",
+        "style": "editorial",
+        "type": "hero",
+        "palette": "elegant",
+        "rendering": "painterly",
+        "text": "none",
+        "mood": "balanced",
+        "center_safe_zone": true
+      },
+      "logo": {
+        "enabled": true,
+        "position": "center",
+        "max_width_ratio": 0.24,
+        "panel": false
+      },
+      "background_dimming": {
+        "enabled": true,
+        "strength": 0.45
+      }
+    },
     "opening_hero": {
       "enabled": false,
       "ratio": "4:3",
@@ -57,5 +80,7 @@ Do not persist article bodies, cookies, edit tokens, private URLs, inferred clai
 ```
 
 `opening_hero` 与 `cover_prompt` 均默认关闭。只有当前请求或持久配置显式启用时写入正文；生成本地封面 Prompt 本身不视为公开授权。
+
+`cover_composition` 只控制分享封面的视觉合成与艺术方向，不会启用正文首屏。默认组合为旧封面创作 skill 的 `hero/editorial` 艺术主图铺底、官方发布 Logo 居中叠加、无品牌面板；方形封面从已合成的宽版中心裁切。`text: none` 表示底图不绘制标题、Logo 或伪文字，品牌标识由后置合成层直接放置。
 
 `wechat_article_branding.brand_profile` 优先于共享的通用 `brand.profile`。公众号品牌化必须从该文件解析 `publication`，避免把工作室或产品品牌误用为发布账号 Logo。

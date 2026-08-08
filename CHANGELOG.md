@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.7.0
+
+- Align the canonical Skill name, kit name, entrypoint, README commands, and embedded-module compatibility labels to `sgc-wechat-article-branding-skill`.
+- Treat the published name alignment as the release baseline for channel packaging.
+
+## 0.6.1
+
+- Add the skill-owned `prompts/cover-hero-editorial-painterly.md` production template for artistic-base covers.
+- Require `cover-direction` to read the shared template before creating an article-specific cover Prompt instance.
+- Keep the reader-visible Prompt option separate from the internal production Prompt while making both traceable inside the branding skill.
+
+## 0.6.0
+
+- Persist the previous cover-creation skill's art direction for branded covers: editorial hero composition, painterly rendering, explicit palette, no generated text, and a center-safe zone for the publisher Logo.
+- Add a visual quality gate that rejects generic warm still-life substitutions when the configured cover direction calls for an authored artistic base.
+
+## 0.5.0
+
+- Add a dedicated cover-composition module that restores the established WeChat cover treatment: artistic background, bottom dimming, and the official publisher Logo centered directly on the canvas.
+- Derive the square sharing crop from the centered-logo wide composition and keep the composition separate from the optional opening hero.
+
 ## 0.4.0
 
 - Separate the publisher/account identity from the studio and product brands through a required `publication` profile.
