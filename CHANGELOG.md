@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.0] - 2026-08-24
+
+### Added
+
+- add the shared feedback-classification and approval-invalidation gate used by every LovStudio Skill
+
 ## 0.7.0
 
 - Align the canonical Skill name, kit name, entrypoint, README commands, and embedded-module compatibility labels to `sgc-wechat-article-branding-skill`.

@@ -1,6 +1,6 @@
 # sgc-wechat-article-branding-skill
 
-![Version](https://img.shields.io/badge/version-0.7.0-CC785C)
+![Version](https://img.shields.io/badge/version-0.9.0-CC785C)
 
 自动读取微信公众号文章，完成标题与内容智能、艺术底图与居中 Logo 分享封面、正文首屏品牌图、可选封面 Prompt 和稳定品牌预设应用，交付专业、有审美的品牌内容。
 
