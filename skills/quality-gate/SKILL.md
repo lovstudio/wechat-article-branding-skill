@@ -1,11 +1,13 @@
 ---
-name: sgc-wechat-branding-quality-gate
+name: lov-wechat-branding-quality-gate
 description: >
   验收公众号文章的内容、结构、审美、品牌准确性与保存持久化；用于“检查最终效果”“保存后验证”、"review the branded WeChat article"，并修复发现的问题。
 license: MIT
+depends_on:
+  - lov-branding-consistency
 metadata:
-  author: lovstudio
-  version: "0.4.0"
+  author: contributors
+  version: "0.4.2"
   tags:
     - quality-gate
     - editorial-review
@@ -14,7 +16,7 @@ metadata:
   dependencies: []
 ---
 
-# Quality Gate
+# 品牌文章验收 · Branded Article Review
 
 以读者可见结果和真实平台状态验收文章。除非用户明确只要报告，发现问题后直接修复并重新检查。
 
@@ -38,7 +40,7 @@ metadata:
 3. 检查内容命题、事实、引语、链接和作者语气。
 4. 检查文章标题是否匹配发布账号身份与转载关系，并检查正文首屏、TOC、章节标题、封面 Prompt、代码块、品牌区的顺序、数量与层级。
 5. 检查封面横版、方形裁切、正文首屏、焦点和 Logo 完整性；确认 Logo 来自 `publication.logo` 且与 `publication.name` 一致。
-6. 检查品牌名称、产品承诺、URL、品牌色和禁止公开内容；确认品牌主体未借正文隐喻临时发挥，并确认每个产品只展示一个 `products[].url` 主链接。
+6. 检查品牌名称、产品承诺、URL、品牌色和禁止公开内容；确认品牌主体未借正文隐喻临时发挥，品牌尾注没有自动枚举无关产品；经正文相关性或用户请求选中的产品只展示一个 `products[].url` 主链接。
 7. 启用 `cover_prompt` 时，检查公开 Prompt 可复制、只出现一次、不含本地路径、内部备注或虚假复现方式。
 8. 检查测试文字、空壳节点、重复图片和非目标字段变化。
 9. 保存并重新加载，再执行一次关键检查。
@@ -59,3 +61,11 @@ metadata:
 ## Dependencies
 
 Authenticated browser preview and the before/after article state from the article-access module.
+
+## Runtime context (shared)
+
+运行前读取本 Skill 包的 `skill.yaml`，由宿主提供 `skill-runtime/v1` 上下文。字段解析顺序为：当前请求、项目上下文、个人 Preferences、品牌 Profile、通用默认值。
+
+- 只使用 Manifest 声明的字段；Profile 保存公开品牌事实，Preferences 保存个人工作偏好。
+- `required: true` 字段缺失时，按 Manifest 的问题配置向用户提出一个聚焦问题；用户明确同意后再保存回答。
+- 报错提供可复制的 `context_id`、字段路径与来源，诊断内容避开秘密、完整私人路径和原始配置。

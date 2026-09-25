@@ -1,14 +1,64 @@
 # Changelog
 
-## [0.9.0] - 2026-08-24
+## [0.11.1] - 2026-09-07
 
 ### Added
 
-- add the shared feedback-classification and approval-invalidation gate used by every LovStudio Skill
+- 统一展示名为「文章品牌化（旧入口）」，保持调用 ID 与能力契约。
+
+## 0.11.0 - 2026-08-31
+
+- 停止作为公开入口，品牌化能力路由到 `lov-article-creator` 的 `brand` 管线。
+- 正文首图的 canonical 比例由 Creator 统一为 `4:3` 横向，不再沿用本目录历史 `3:4` 规则。
+
+## [0.10.3] - 2026-08-30
+
+### Fixed
+
+- refine artwork and endcap wording
+- rename real-artwork sections to 本期封面 and keep product mentions opt-in
+- accept and validate top-level `depends_on` declarations in the bundled source validator
+
+## [0.10.2] - 2026-08-29
+
+### Changed
+
+- prefer attributable Public Domain or clearly licensed real artworks for editorial article covers
+- replace reader-facing Cover Prompt with an artwork background note when a real artwork is used
+- keep the artwork note before the stable brand endcap and record source and rights metadata
+
+## [0.10.1] - 2026-08-27
+
+### Fixed
+
+- resolve publication cover Logo variants
+- prefer publication.cover_logo over the generic publication Logo
+
+## [0.10.0] - 2026-08-27
+
+### Added
+
+- add vertical branded opening heroes
+- use a 3:4 first body image and suppress duplicate body titles
+
+## [0.9.0] - 2026-08-25
+
+### Added
+
+- Make square WeChat covers place the official publisher Logo at the bottom center by default.
+- Preserve the centered wide Logo while deriving the square background before Logo composition.
+- Document and validate square Logo sizing, bottom spacing, and safe-area requirements.
+- Bump the embedded cover-direction contract to `0.5.2` for the new square bottom Logo safe zone.
+
+## 0.8.0
+
+- Make the `full` branding edition include an independent `4:3` opening hero before the introduction by default.
+- Make the sanitized reader-facing cover Prompt section appear after the conclusion and before the stable brand endcap by default.
+- Preserve explicit per-article opt-out controls for `opening_hero` and `cover_prompt`.
 
 ## 0.7.0
 
-- Align the canonical Skill name, kit name, entrypoint, README commands, and embedded-module compatibility labels to `sgc-wechat-article-branding-skill`.
+- Align the canonical Skill name, kit name, entrypoint, README commands, and embedded-module compatibility labels to `lov-wechat-article-branding-skill`.
 - Treat the published name alignment as the release baseline for channel packaging.
 
 ## 0.6.1

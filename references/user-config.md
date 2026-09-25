@@ -1,86 +1,54 @@
-# User Configuration
+# 用户配置
 
-Resolve persistent brand and editorial preferences without creating a private implementation branch.
+公众号品牌化将“品牌公开资料”和“个人运行偏好”分开保存：
 
-## Resolution order
+- `SKILL_PROFILE_PATH` 指向用户的 `profile.json`；官网配置完成后由宿主同步或生成该文件。
+- `SKILL_PREFERENCES_PATH` 指向用户的 `preferences.json`；这里只保存管线、开关和审美偏好。
+- 如果宿主设置了 `SKILLS_CONFIG_DIR`，默认文件为该目录下的 `profile.json` 与 `preferences.json`。
 
-1. Explicit values in the current request.
-2. Skill-specific environment variables.
-3. Shared profile JSON.
-4. Safe inferred defaults such as the current language.
-5. One focused question for a required user-facing value that remains unknown.
+## 解析顺序
 
-Default profile location:
-
-```bash
-${LOVSTUDIO_SKILLS_PROFILE:-$HOME/.lovstudio/skills/profile.json}
-```
-
-## First run
-
-1. Prefill fields from the request and current project.
-2. Load a brand-profile file referenced by the shared profile.
-3. Validate it with `scripts/validate_brand_profile.py`.
-4. Ask only for a missing field that changes public output.
-5. Show values before persisting them with the user's knowledge.
-
-Do not persist article bodies, cookies, edit tokens, private URLs, inferred claims, or temporary browser state.
-
-## Shared profile example
+1. 当前请求中的显式值；
+2. 当前文章和项目上下文；
+3. `preferences.json` 中 `skills.wechat_article_branding` 的偏好；
+4. 通用 Profile 的公开品牌事实；
+5. 不改变文章可见结果的中性默认值；
+6. 仍缺少必需身份或 Logo 时，只询问一个聚焦问题。
 
 ```json
 {
+  "schema": "skill-preferences/v1",
+  "version": 1,
   "user": {
-    "language": "zh-CN",
-    "timezone": "Asia/Shanghai"
+    "language": "LANGUAGE",
+    "timezone": "TIMEZONE"
   },
-  "brand": {
-    "profile": "$HOME/.lovstudio/skills/brand.json"
-  },
-  "wechat_article_branding": {
-    "brand_profile": "$HOME/.lovstudio/skills/wechat-article-branding-brand.json",
-    "default_pipeline": "full",
-    "polish_enabled": false,
-    "cover_ratios": ["2.35:1", "1:1"],
-    "cover_composition": {
-      "base": "artistic",
-      "art_direction": {
-        "source_skill": "baoyu-cover-image",
-        "style": "editorial",
-        "type": "hero",
-        "palette": "elegant",
-        "rendering": "painterly",
-        "text": "none",
-        "mood": "balanced",
-        "center_safe_zone": true
-      },
-      "logo": {
-        "enabled": true,
-        "position": "center",
-        "max_width_ratio": 0.24,
-        "panel": false
-      },
-      "background_dimming": {
-        "enabled": true,
-        "strength": 0.45
+  "skills": {
+    "wechat_article_branding": {
+      "default_pipeline": "full",
+      "opening_hero": {"enabled": true, "ratio": "3:4", "placement": "before_intro", "logo_position": "bottom_center"},
+      "cover_prompt": {"enabled": true, "placement": "before_endcap", "title": "封面 Prompt"},
+      "cover_composition": {
+        "base": "artistic",
+        "logo": {
+          "enabled": true,
+          "asset": "PUBLICATION_COVER_LOGO",
+          "variant": "white",
+          "position": "center",
+          "max_width_ratio": 0.24,
+          "panel": false,
+          "square": {
+            "position": "bottom_center",
+            "max_width_ratio": 0.36,
+            "max_height_ratio": 0.15,
+            "bottom_margin_ratio": 0.05
+          }
+        },
+        "background_dimming": {"enabled": true, "strength": 0.45}
       }
-    },
-    "opening_hero": {
-      "enabled": false,
-      "ratio": "4:3",
-      "placement": "before_intro"
-    },
-    "cover_prompt": {
-      "enabled": false,
-      "placement": "before_endcap",
-      "title": "封面 Prompt"
     }
   }
 }
 ```
 
-`opening_hero` 与 `cover_prompt` 均默认关闭。只有当前请求或持久配置显式启用时写入正文；生成本地封面 Prompt 本身不视为公开授权。
-
-`cover_composition` 只控制分享封面的视觉合成与艺术方向，不会启用正文首屏。默认组合为旧封面创作 skill 的 `hero/editorial` 艺术主图铺底、官方发布 Logo 居中叠加、无品牌面板；方形封面从已合成的宽版中心裁切。`text: none` 表示底图不绘制标题、Logo 或伪文字，品牌标识由后置合成层直接放置。
-
-`wechat_article_branding.brand_profile` 优先于共享的通用 `brand.profile`。公众号品牌化必须从该文件解析 `publication`，避免把工作室或产品品牌误用为发布账号 Logo。
+首次运行时只展示准备保存的字段；用户明确同意后才写入个人配置。文章正文、Cookie、编辑令牌、私人 URL、本地浏览器状态和生产 Prompt 不进入任何共享配置。

@@ -1,20 +1,22 @@
 ---
-name: sgc-wechat-branding-content-intelligence
+name: lov-wechat-branding-content-intelligence
 description: >
   基于真实公众号文章生成标题、TOC、结构调整、摘要和可选润色计划；用于“润色标题”“生成目录”“优化文章结构”、"improve this article structure"，不直接操作编辑器。
 license: MIT
+depends_on:
+  - lov-branding-consistency
 metadata:
-  author: lovstudio
-  version: "0.2.0"
+  author: contributors
+  version: "0.2.1"
   tags:
     - content-intelligence
     - toc
     - editorial-structure
-  compatibility: "Embedded module for sgc-wechat-article-branding-skill."
+  compatibility: "Embedded module for lov-wechat-article-branding-skill."
   dependencies: []
 ---
 
-# Content Intelligence
+# 文章结构精修 · Article Structure Editor
 
 理解文章后生成结构化、可审阅的内容变更计划。只产出文章内容，不直接控制公众号编辑器。
 
@@ -61,3 +63,11 @@ metadata:
 ## Dependencies
 
 None.
+
+## Runtime context (shared)
+
+运行前读取本 Skill 包的 `skill.yaml`，由宿主提供 `skill-runtime/v1` 上下文。字段解析顺序为：当前请求、项目上下文、个人 Preferences、品牌 Profile、通用默认值。
+
+- 只使用 Manifest 声明的字段；Profile 保存公开品牌事实，Preferences 保存个人工作偏好。
+- `required: true` 字段缺失时，按 Manifest 的问题配置向用户提出一个聚焦问题；用户明确同意后再保存回答。
+- 报错提供可复制的 `context_id`、字段路径与来源，诊断内容避开秘密、完整私人路径和原始配置。

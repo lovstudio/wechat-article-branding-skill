@@ -1,11 +1,13 @@
 ---
-name: sgc-wechat-branding-cover-direction
+name: lov-wechat-branding-cover-direction
 description: >
   将文章主题和参考图转为成熟的公众号品牌封面，管理素材来源、Logo 完整性与双比例裁切；用于“重做封面”“不要 AI 味”、"create an editorial WeChat cover"。
 license: MIT
+depends_on:
+  - lov-branding-consistency
 metadata:
-  author: lovstudio
-  version: "0.5.1"
+  author: contributors
+  version: "0.6.4"
   tags:
     - cover-design
     - editorial-art-direction
@@ -14,7 +16,7 @@ metadata:
   dependencies: []
 ---
 
-# Cover Direction
+# 封面艺术指导 · Cover Art Direction
 
 把文章命题翻译为一个克制、可辨认并适合公众号真实裁切的视觉世界。
 
@@ -34,16 +36,16 @@ metadata:
 ## Workflow (MANDATORY)
 
 1. 读取文章命题、参考图和品牌 Profile。
-2. 读取 `$KIT_DIR/prompts/cover-hero-editorial-painterly.md`，先用文章事实填充 `ARTICLE_THESIS`、`CORE_RELATIONSHIP`、`PRIMARY_FORMS`、`MATERIAL_LANGUAGE` 和 `PALETTE`，再生成本次完整制作 Prompt。
+2. 先检索与文章命题、构图比例和发布语境匹配的真实艺术作品，并核对馆藏页与权利状态；只有选择生成式方向时才读取 `$KIT_DIR/prompts/cover-hero-editorial-painterly.md` 并生成完整制作 Prompt。
 3. 提取参考图的信息层级、焦点、留白、色彩、素材类型和品牌权重，不照抄其身份元素。
-4. 解析 `wechat_article_branding.cover_composition.art_direction`；优先继承旧封面创作 skill 的 `source_skill`、`style`、`type`、`palette`、`rendering`、`text` 和 `mood`，再选择素材策略：真实摄影、授权或公共领域作品、生成式画面。选择理由必须服务文章而非工具偏好。
+4. 解析 `wechat_article_branding.cover_composition.art_direction`；默认按“公共领域或授权明确的真实艺术作品 → 真实摄影 → 生成式画面”的顺序选择素材。深度文章在主题与构图匹配时优先使用博物馆开放馆藏，选择理由必须服务文章而非工具偏好。
 5. 需要外部素材时记录作品、作者、来源、使用状态和原始 URL。
-6. 从 `publication.logo` 加载发布主体的官方 Logo；保持字形、字距、拼写和透明区域，不用生成模型重画品牌标识。`brand` 工作室、母品牌与 `products` 产品资产均不得作为默认替代。
+6. 从 `publication.cover_logo` 加载发布主体的封面专用 Logo；字段缺失时才回退到 `publication.logo`。同时传递 `publication.cover_logo_variant`，对 `white` 等显式变体做像素验收。保持字形、字距、拼写和透明区域，不用生成模型重画品牌标识。`brand` 工作室、母品牌与 `products` 产品资产均不得作为默认替代。
 7. 先构图 `2.35:1`，同时保护中心 `1:1` 安全区。
 8. 控制视觉焦点；默认避免模板化蓝紫渐变、机器人、代码 UI、霓虹和无意义科技粒子。
-9. 在生成或合成前保存完整制作 Prompt，并派生不含本地路径、内部备注和工具步骤的读者可复制 Prompt。
-10. 启用 `opening_hero` 时，基于同一视觉世界制作独立正文首屏；默认采用 `4:3`、Logo 下方居中、导语之前，并避免继承导语卡片或正文容器样式。
-11. 输出 PNG、上传用 JPG、裁切预览、制作 Prompt 和读者可复制 Prompt。
+9. 使用真实作品时保存作品、作者、年代、馆藏页、原图 URL、权利状态与处理方式，并为正文生成“本期封面”；使用生成式画面时保存完整制作 Prompt，再派生读者 Prompt。
+10. 启用 `opening_hero` 时，基于同一视觉世界制作独立正文首屏；默认采用 `3:4` 竖向构图、Logo 底部居中、导语之前，并避免继承导语卡片或正文容器样式。平台页面已展示文章标题时，正文不得在首图之前再输出同名一级标题。
+11. 输出 PNG、上传用 JPG、裁切预览，以及与制作方法匹配的作品来源记录或 Prompt 记录。
 12. 上传后检查平台实际预览和 CDN 成品，而不是只检查本地文件。
 
 ## Art direction contract
@@ -51,12 +53,12 @@ metadata:
 - `type: hero` 需要一个可识别的主视觉隐喻和宽画幅张力，不用零散装饰拼出“看起来像封面”。
 - `style: editorial` 需要有作者感的构图、材质和留白；`rendering: painterly` 使用绘画、纸艺或版画肌理，避免未经选择的暖色桌面静物和图库式产品摄影。
 - `palette: elegant` 可使用克制的珊瑚、灰蓝、墨色、奶油色和少量金属色，但不把整张图压成单一橙棕色。
-- `text: none` 时，底图不得出现标题、字母、数字、伪文字、Logo 或水印；官方 Logo 由 `cover-composition` 在生成后直接居中叠加。
-- `center_safe_zone: true` 时，中心区域保持低细节和足够对比度，供官方 Logo 居中使用；宽版完成后再派生方形裁切。
+- `text: none` 时，底图不得出现标题、字母、数字、伪文字、Logo 或水印；官方 Logo 由 `cover-composition` 在生成后分别合成。
+- `center_safe_zone: true` 时，中心区域保持低细节和足够对比度，供横版 Logo 居中使用；`square_bottom_logo_safe_zone: true` 时，中心方形裁切的底部中央同样保持安静，供方版 Logo 使用。
 
-## Prompt publication option
+## Artwork note or Prompt publication
 
-完整读取 `$KIT_DIR/references/cover-prompt.md` 与 `$KIT_DIR/prompts/cover-hero-editorial-painterly.md`。始终保留制作 Prompt 作为内部产物；只有配置或当前请求显式启用 `cover_prompt` 时，才把读者可复制版交给品牌模块写入文章。涉及公共领域或授权素材时，写清必需的输入素材或来源，不把合成流程伪装成纯文本生成。
+真实艺术作品默认在结论后、品牌尾注前写“本期封面”，展示完整原作并介绍作品、作者、年代、馆藏背景、与文章命题的关系、来源页与权利状态。生成式封面才读取 `$KIT_DIR/references/cover-prompt.md` 与 `$KIT_DIR/prompts/cover-hero-editorial-painterly.md`，并按配置公开清理后的读者 Prompt。两种说明默认二选一，不把真实作品加工伪装成纯文本生成。
 
 ## Decision rule
 
@@ -68,11 +70,21 @@ metadata:
 - 横版与方形裁切都保留主题和品牌。
 - Logo 高对比且不变形。
 - Logo 对应 `publication.name` 的发布主体，而不是工作室、母品牌或产品。
+- 配置 `publication.cover_logo_variant` 时，最终像素与该变体一致；不得因 `publication.logo` 回退顺序而使用错误颜色。
 - 素材来源可回溯。
-- 制作 Prompt 与公开 Prompt 分离，公开版本可复制且不泄漏本地路径或内部上下文。
+- 真实作品有可回溯的作品背景与权利记录；生成式封面的制作 Prompt 与公开 Prompt 分离，公开版本不泄漏本地路径或内部上下文。
 - 启用正文首屏时，首图位于导语之前并保持独立视觉容器。
+- 竖向首图为 `3:4`，使用同一官方 `publication.logo`；它是正文第一块，之前没有重复的文章标题。
 - 文章标题由平台叠加时，画面仍留有可读区域。
 
 ## Dependencies
 
 按任务选择图像生成、图像编辑、公共素材检索和真实页面预览能力。
+
+## Runtime context (shared)
+
+运行前读取本 Skill 包的 `skill.yaml`，由宿主提供 `skill-runtime/v1` 上下文。字段解析顺序为：当前请求、项目上下文、个人 Preferences、品牌 Profile、通用默认值。
+
+- 只使用 Manifest 声明的字段；Profile 保存公开品牌事实，Preferences 保存个人工作偏好。
+- `required: true` 字段缺失时，按 Manifest 的问题配置向用户提出一个聚焦问题；用户明确同意后再保存回答。
+- 报错提供可复制的 `context_id`、字段路径与来源，诊断内容避开秘密、完整私人路径和原始配置。

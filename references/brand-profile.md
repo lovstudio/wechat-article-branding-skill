@@ -1,86 +1,57 @@
-# Brand Profile
+# WeChat 品牌 Profile 适配
 
-The profile contains approved public facts and presentation rules. It is data, not an implementation mode.
+公众号品牌化只读取用户 Profile，不在 Skill 源码内保存任何真实品牌资料。Profile 分为两层：通用字段由官网或其他 Profile 编辑器生成，公众号特有的发布主体、产品和文章区块放在 `extensions.lov-wechat-article-branding-skill` 下。
 
-## Minimal schema
+## 最小输入
 
 ```json
 {
-  "publication": {
-    "name": "PUBLISHER_NAME",
-    "logo": "PORTABLE_PUBLISHER_LOGO_PATH",
-    "logo_policy": "publisher_only"
+  "schema": "skill-profile/v1",
+  "profile_id": "profile-id",
+  "revision": 1,
+  "identity": {
+    "id": "publisher-id",
+    "name": {"zh-CN": "发布主体名称", "en-US": "Publisher name"},
+    "logo": "assets/publisher-logo.svg",
+    "tagline": {"zh-CN": "Tagline", "en-US": "Tagline"}
+  },
+  "purpose": {
+    "mission": {"zh-CN": "使命", "en-US": "Mission"},
+    "vision": {"zh-CN": "愿景", "en-US": "Vision"},
+    "values": ["价值观"]
   },
   "brand": {
-    "name": "BRAND_NAME",
     "site": "https://example.com",
-    "language": "zh-CN",
-    "tone": ["professional", "restrained"],
+    "colors": {"primary": "#3366FF"},
+    "tone": ["clear", "restrained"],
     "public_facts": ["APPROVED_PUBLIC_FACT"],
-    "forbidden_context": ["INTERNAL_CONTEXT_PATTERN"]
+    "forbidden_context": ["INTERNAL_CONTEXT"]
   },
-  "visual": {
-    "primary_color": "#00B38A",
-    "cover_style": "editorial",
-    "cover_art_direction": {
-      "source_skill": "baoyu-cover-image",
-      "style": "editorial",
-      "type": "hero",
-      "palette": "elegant",
-      "rendering": "painterly",
-      "text": "none",
-      "mood": "balanced",
-      "center_safe_zone": true
-    },
-    "cover_ratios": ["2.35:1", "1:1"]
-  },
-  "products": [
-    {
-      "name": "PRODUCT_NAME",
-      "promise": "USER_VISIBLE_RESULT",
-      "url": "https://example.com/product"
+  "extensions": {
+    "lov-wechat-article-branding-skill": {
+      "publication": {
+        "name": {"zh-CN": "发布主体名称"},
+        "logo": "assets/publisher-logo.svg",
+        "cover_logo": "assets/publisher-cover-logo-white.png",
+        "cover_logo_variant": "white",
+        "logo_policy": "publisher_only"
+      },
+      "products": [],
+      "blocks": {}
     }
-  ],
-  "blocks": {
-    "endcap": {
-      "enabled": true,
-      "mode": "stable",
-      "product_link_policy": "primary_only",
-      "title": "APPROVED_ENDCAP_TITLE",
-      "paragraphs": ["APPROVED_ENDCAP_PARAGRAPH"],
-      "links": [
-        {"label": "BRAND_NAME", "url": "https://example.com"}
-      ]
-    },
-    "opening_hero": {
-      "enabled": false,
-      "ratio": "4:3",
-      "logo_position": "lower_center"
-    },
-    "cover_prompt": {
-      "enabled": false,
-      "title": "封面 Prompt",
-      "placement": "before_endcap"
-    },
-    "product_intro": true,
-    "copyable_assets": "optional"
   }
 }
 ```
 
-## Rules
+## 读取规则
 
-- `publication` is the visible publisher/account identity. Covers and opening heroes must use `publication.logo`, never an organization, studio, or product logo inferred from `brand` or `products`.
-- `publication.logo_policy` must be `publisher_only`. If its official asset is missing, ask one focused question instead of silently falling back to another logo.
-- Use the supplied official publisher asset directly or create deterministic color variants from it. Do not redraw the mark with a generative model.
-- Treat only `public_facts`, product promises, names, URLs, and approved design fields as publishable.
-- Treat `forbidden_context` as a final-output exclusion list, never as copy.
-- Keep product promises outcome-led; do not invent metrics, customers, awards, integrations, or capabilities.
-- When `blocks.endcap` is an object, treat its title, paragraphs, and links as approved fixed copy. `mode` must be `stable`; article-specific adaptation is limited to placement and visual hierarchy.
-- `products[].url` is the one primary public link for that product. With `product_link_policy: primary_only`, render at most that one link; do not append repositories, download pages, documentation, or other secondary links unless the current request explicitly asks for them.
-- `blocks.endcap.links` contains non-product links such as the studio home page. Product URLs are resolved from `products[].url` and must not be duplicated in this list.
-- Treat `blocks.opening_hero` and `blocks.cover_prompt` as independent opt-in publication components. Do not infer one from the other.
-- Resolve share-cover composition from the shared `wechat_article_branding.cover_composition` configuration, separately from `blocks.opening_hero`; the established default is an artistic base image with the official publisher Logo centered directly on the canvas and no panel.
-- Publish only a sanitized reader prompt; keep production prompts, local paths, model notes, and intermediate instructions out of the article.
-- Resolve relative asset paths against the profile location.
-- Profiles may reference private local assets, but committed examples must use placeholders.
+- 优先读取 `extensions.lov-wechat-article-branding-skill`；没有扩展时，从通用 `identity` 和 `brand` 适配发布主体与品牌名称。
+- `identity.logo` 是通用 Logo；公众号扩展中的 `publication.logo` 可以为不同发布账号指定官方 Logo。`publication.cover_logo` 是封面与正文首图专用变体，优先级高于通用 Logo；`publication.cover_logo_variant` 记录 `white` 等需要验收的颜色语义。这些字段都必须由用户 Profile 明确提供。
+- `brand.public_facts`、产品名称、产品承诺、链接和固定品牌区块是允许公开的事实；`brand.forbidden_context` 只用于最终排除。
+- 品牌尾注默认不枚举产品；只有与正文主题直接相关或用户明确要求时才读取对应产品。被选中的产品只展示 `products[].url` 主链接，品牌级链接不重复产品链接。
+- 缺少会改变文章可见结果的字段时，按 `skill.yaml` 生成一个聚焦问题；不从项目名称、文章主题或当前聊天背景猜测。
+- 公开文章不写入 Profile 版本、同步来源、个人配置、生产 Prompt、本地路径或内部备注。
+
+## 兼容旧文件
+
+验证器仍可读取根节点直接包含 `publication`、`brand`、`products`、`blocks` 和 `visual` 的旧结构。新配置应迁移到通用 Profile 与 `extensions`，旧结构只作为一次性迁移输入，不再作为分发示例。

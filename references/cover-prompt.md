@@ -14,13 +14,13 @@ Treat the cover production prompt and the article-visible prompt as separate art
 ```json
 {
   "opening_hero": {
-    "enabled": false,
-    "ratio": "4:3",
+    "enabled": true,
+    "ratio": "3:4",
     "placement": "before_intro",
     "marker": "opening-hero"
   },
   "cover_prompt": {
-    "enabled": false,
+    "enabled": true,
     "placement": "before_endcap",
     "title": "封面 Prompt",
     "marker": "cover-prompt"
@@ -28,7 +28,7 @@ Treat the cover production prompt and the article-visible prompt as separate art
 }
 ```
 
-Keep both options disabled unless the current request or resolved user configuration enables them. Enabling one does not enable the other.
+For the `full` branding pipeline, both options are enabled by default. A current request or resolved user configuration can explicitly disable either one; enabling one does not enable the other.
 
 ## Production and reader prompts
 
@@ -52,11 +52,11 @@ Retain in the reader prompt:
 
 ## Article block
 
-Render only a heading and one directly copyable prompt block. Use `data-sgc-block="cover-prompt"` as the unique marker. Place the block after the article conclusion and before the stable brand endcap by default. Do not add a process diary, model commentary, or reuse instructions around it.
+Render only a heading and one directly copyable prompt block. Use `data-lov-block="cover-prompt"` as the unique marker. Place the block after the article conclusion and before the stable brand endcap by default; the `full` pipeline publishes it unless explicitly disabled. Do not add a process diary, model commentary, or reuse instructions around it.
 
 ## Opening hero
 
-When enabled, create a reading-oriented image rather than reusing the sharing cover without review. Default to `4:3`, place the official publisher Logo from `publication.logo` near the lower center, preserve a single visual focal point, and insert the block before the introduction with `data-sgc-block="opening-hero"`. Keep it outside introduction cards, blockquotes, borders, and colored content containers.
+By default, create a vertical reading-oriented image rather than reusing the sharing cover without review. Use `3:4`, place the official publisher Logo from `publication.logo` near the lower center, preserve a single visual focal point, and insert the block before the introduction with `data-lov-block="opening-hero"`. It must be the first body block; when the platform title is already visible, do not emit a duplicate body `h1` before or after it. Keep it outside introduction cards, blockquotes, borders, and colored content containers. An explicit `opening_hero.enabled: false` skips this block.
 
 ## Validation
 

@@ -1,28 +1,38 @@
-# sgc-wechat-article-branding-skill
+# 文章品牌化（旧入口） · Article Branding (Legacy)
 
-![Version](https://img.shields.io/badge/version-0.9.0-CC785C)
+![Version](https://img.shields.io/badge/version-0.11.1-CC785C)
 
-自动读取微信公众号文章，完成标题与内容智能、艺术底图与居中 Logo 分享封面、正文首屏品牌图、可选封面 Prompt 和稳定品牌预设应用，交付专业、有审美的品牌内容。
+> 已归并：新任务请使用 `lov-article-creator` 的 `brand` 管线。本目录只保留历史实现与兼容路由，不应继续安装或被语义发现。
+
+自动读取微信公众号文章，完成标题与内容智能、真实艺术或生成式主视觉、双比例 Logo 分享封面（横版居中、方版底部）、正文首屏品牌图、作品背景或可选封面 Prompt，以及稳定品牌预设应用。
 
 ## 本地安装
+
+首选通过 Skills 目录安装：
+
+```bash
+npx skills add lov-wechat-article-branding -g -y
+```
+
+在源码开发环境中，也可从本仓库根目录链接：
 
 在本仓库根目录执行：
 
 ```bash
 export SKILL_SOURCE_DIR="$(pwd)"
-mkdir -p "${LOVSTUDIO_SKILLS_INSTALL_DIR:?请设置本地 Skills 目录}"
+mkdir -p "${SKILLS_INSTALL_DIR:?请设置本地 Skills 目录}"
 ln -s "$SKILL_SOURCE_DIR" \
-  "$LOVSTUDIO_SKILLS_INSTALL_DIR/sgc-wechat-article-branding-skill"
+  "$SKILLS_INSTALL_DIR/lov-wechat-article-branding-skill"
 ```
 
 ## 用户配置
 
-发布主体、工作室品牌、产品、链接、语气和设计指南通过共享 Profile 提供。封面与正文首图只使用发布主体的官方 Logo；每个产品在品牌尾注中默认只展示一个主链接。真实配置不进入 Skill 源码。
+发布主体、工作室品牌、产品、链接、语气和设计指南通过共享 Profile 提供。封面与正文首图只使用发布主体的官方 Logo；品牌尾注默认只展示工作室品牌，不自动枚举产品。只有与正文直接相关或用户明确要求的产品才加入，并只展示一个主链接。真实配置不进入 Skill 源码。
 
 默认共享配置：
 
 ```bash
-${LOVSTUDIO_SKILLS_PROFILE:-$HOME/.lovstudio/skills/profile.json}
+${SKILL_PROFILE_PATH:-$SKILLS_CONFIG_DIR/profile.json}
 ```
 
 详见 `references/user-config.md` 与 `references/brand-profile.md`。
@@ -30,15 +40,15 @@ ${LOVSTUDIO_SKILLS_PROFILE:-$HOME/.lovstudio/skills/profile.json}
 ## 使用
 
 ```text
-$sgc-wechat-article-branding-skill 把当前公众号文章整体品牌化：生成目录、重构封面、增加专业的品牌收尾并保存验证。
+$lov-wechat-article-branding-skill 把当前公众号文章整体品牌化：生成目录、重构封面、增加专业的品牌收尾并保存验证。
 ```
 
 ```text
-$sgc-wechat-article-branding-skill audit 当前文章，只检查内容、审美和品牌一致性，不修改。
+$lov-wechat-article-branding-skill audit 当前文章，只检查内容、审美和品牌一致性，不修改。
 ```
 
 ```text
-$sgc-wechat-article-branding-skill 给当前文章增加正文首屏品牌图，并把这次实际使用的封面 Prompt 作为可复制区块放在品牌尾注之前。
+$lov-wechat-article-branding-skill 给当前文章增加正文首屏品牌图，并把这次实际使用的封面 Prompt 作为可复制区块放在品牌尾注之前。
 ```
 
 ## 管线
@@ -63,7 +73,7 @@ python3 scripts/validate_brand_profile.py --self-test
 - Python 3.8+
 - PyYAML（源码结构校验）
 
-正文首屏品牌图与封面 Prompt 是独立选项，默认关闭。封面艺术方向从旧封面创作 skill 与共享 Profile 持久读取；生产 Prompt 模板内置在 `prompts/cover-hero-editorial-painterly.md`，公开选项与落地规则见 `references/cover-prompt.md`。
+正文首屏品牌图与封面 Prompt 是独立可关闭选项，`full` 管线默认开启。封面艺术方向从旧封面创作 skill 与共享 Profile 持久读取；生产 Prompt 模板内置在 `prompts/cover-hero-editorial-painterly.md`，公开选项与落地规则见 `references/cover-prompt.md`。
 
 ## License
 
