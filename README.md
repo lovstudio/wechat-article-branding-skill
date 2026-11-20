@@ -1,6 +1,6 @@
 # 文章品牌化（旧入口） · Article Branding (Legacy)
 
-![Version](https://img.shields.io/badge/version-0.11.1-CC785C)
+![Version](https://img.shields.io/badge/version-0.11.2-CC785C)
 
 > 已归并：新任务请使用 `lov-article-creator` 的 `brand` 管线。本目录只保留历史实现与兼容路由，不应继续安装或被语义发现。
 
@@ -11,7 +11,7 @@
 首选通过 Skills 目录安装：
 
 ```bash
-npx skills add lov-wechat-article-branding -g -y
+npx lovstudio skills add wechat-article-branding -g -y
 ```
 
 在源码开发环境中，也可从本仓库根目录链接：
